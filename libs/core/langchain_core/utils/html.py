@@ -123,9 +123,15 @@ def extract_sub_links(
             if parsed_base_url.netloc != parsed_path.netloc:
                 continue
 
-            # Will take care of verifying rest of path after netloc
-            # if it's more specific
-            if not path.startswith(base_url_to_use):
+            if parsed_base_url.scheme != parsed_path.scheme:
+                continue
+
+            base_path = parsed_base_url.path.rstrip("/")
+            candidate_path = parsed_path.path
+
+            if base_path and candidate_path != base_path and not candidate_path.startswith(
+                f"{base_path}/"
+            ):
                 continue
 
         results.append(path)

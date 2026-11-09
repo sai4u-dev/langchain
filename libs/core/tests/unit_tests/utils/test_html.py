@@ -185,6 +185,34 @@ def test_prevent_outside() -> None:
     assert actual == expected
 
 
+def test_prevent_outside_respects_path_boundaries() -> None:
+    """Test that prevent_outside respects URL path boundaries."""
+    html = (
+        '<a href="https://foobar.com/docs">BASE</a>'
+        '<a href="https://foobar.com/docs/intro">CHILD</a>'
+        '<a href="https://foobar.com/docsite">SIBLING</a>'
+        '<a href="https://foobar.com/docs-old">SIBLING</a>'
+        '<a href="https://foobar.com/blog">OUTSIDE</a>'
+    )
+
+    expected = sorted(
+        [
+            "https://foobar.com/docs",
+            "https://foobar.com/docs/intro",
+        ]
+    )
+
+    actual = sorted(
+        extract_sub_links(
+            html,
+            "https://foobar.com/docs",
+            prevent_outside=True,
+        )
+    )
+
+    assert actual == expected
+
+
 def test_extract_sub_links_with_query() -> None:
     html = (
         '<a href="https://foobar.com?query=123">one</a>'
